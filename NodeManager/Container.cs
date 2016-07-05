@@ -34,9 +34,29 @@ namespace TinyRM.NodeManager
         public abstract long GetMemoryUsage();
 
         /// <summary>
+        /// Launch this container
+        /// </summary>
+        public abstract void Run();
+        #endregion
+
+        #region IDisposable Support
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                disposedValue = true;
+            }
+        }
+        
+        /// <summary>
         /// Release resources
         /// </summary>
-        public abstract void Dispose();
+        public void Dispose()
+        {
+            Dispose(true);
+        }
         #endregion
     }
 }
