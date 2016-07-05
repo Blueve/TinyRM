@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace TinyRM.NodeManager
 {
+    /// <summary>
+    /// A container for windows application (.exe)
+    /// </summary>
     class WinContainer : Container
     {
 
@@ -17,7 +20,9 @@ namespace TinyRM.NodeManager
         /// <summary>
         /// Root process of this container's inner application
         /// </summary>
-        private readonly Process _root;
+        private Process _root;
+
+        private readonly ProcessStartInfo _startInfo;
         #endregion
 
         #region Constructor
@@ -29,24 +34,11 @@ namespace TinyRM.NodeManager
         /// <param name="arguments">Application's arguments</param>
         public WinContainer(int memory, string fileName, string arguments = "") : base(memory)
         {
-            // TODO: Should start this process in another user group
-            // Start a new process to run the given WinApplication
-            try
+            ProcessStartInfo info = new ProcessStartInfo
             {
-                _root = Process.Start(fileName, arguments);
-            }
-            catch(InvalidOperationException)
-            {
-                // fileName or arguments is null
-            }
-            catch(Win32Exception)
-            {
-                // Can't lunch the process
-            }
-            catch(FileNotFoundException)
-            {
-                // WinApplication was not found
-            }
+                FileName = fileName,
+                Arguments = arguments
+            };
         }
         #endregion
 
@@ -88,6 +80,9 @@ namespace TinyRM.NodeManager
         /// <returns></returns>
         private IEnumerable<Process> TraverseProcessTree()
         {
+            if (_root == null)
+                yield break;
+
             var bfs = new Queue<Process>();
             bfs.Enqueue(_root);
             while (bfs.Count > 0)
@@ -121,18 +116,47 @@ namespace TinyRM.NodeManager
         #endregion
 
         #region Implement Continer's Abstract Method
-        /// <summary>
-        /// Get current memory usage of this container
-        /// </summary>
-        /// <returns>Memory usage (MB)</returns>
-        public override void Dispose()
+        public override void Run()
         {
-            KillProcessTree();
+            // TODO: Should start this process in another user group
+            // Start a new process to run the given WinApplication
+            try
+            {
+                _root = Process.Start(_startInfo);
+            }
+            catch (InvalidOperationException)
+            {
+                // fileName or arguments is null
+            }
+            catch (Win32Exception)
+            {
+                // Can't lunch the process
+            }
+            catch (FileNotFoundException)
+            {
+                // WinApplication was not found
+            }
         }
+
+        private bool disposedValue = false;
 
         /// <summary>
         /// Release resources
         /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                KillProcessTree();
+                Dispose();
+                disposedValue = true;
+            }
+        }
+
+        /// <summary>
+        /// Get current memory usage of this container
+        /// </summary>
+        /// <returns>Memory usage (MB)</returns>
         public override long GetMemoryUsage()
         {
             long usage = 0;
