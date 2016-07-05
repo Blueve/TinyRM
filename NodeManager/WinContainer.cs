@@ -56,7 +56,7 @@ namespace TinyRM.NodeManager
         /// </summary>
         private void KillProcessTree()
         {
-            foreach(var process in TraversalProcessTree())
+            foreach(var process in TraverseProcessTree())
             {
                 KillProcess(process);
             }
@@ -86,7 +86,7 @@ namespace TinyRM.NodeManager
         /// Traversal the process tree
         /// </summary>
         /// <returns></returns>
-        private IEnumerable<Process> TraversalProcessTree()
+        private IEnumerable<Process> TraverseProcessTree()
         {
             var bfs = new Queue<Process>();
             bfs.Enqueue(_root);
@@ -136,7 +136,7 @@ namespace TinyRM.NodeManager
         public override long GetMemoryUsage()
         {
             long usage = 0;
-            foreach (var process in TraversalProcessTree())
+            foreach (var process in TraverseProcessTree())
             {
                 usage += process.WorkingSet64;
             }
