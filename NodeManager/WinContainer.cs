@@ -25,6 +25,19 @@ namespace TinyRM.NodeManager
         private readonly ProcessStartInfo _startInfo;
         #endregion
 
+        #region Implement Continer's Abstract Property
+        /// <summary>
+        /// Return true if root process exited
+        /// </summary>
+        public override bool HasExited
+        {
+            get
+            {
+                return _root.HasExited;
+            }
+        }
+        #endregion
+
         #region Constructor
         /// <summary>
         /// Init a WinApplication container
@@ -34,7 +47,7 @@ namespace TinyRM.NodeManager
         /// <param name="arguments">Application's arguments</param>
         public WinContainer(int memory, string fileName, string arguments = "") : base(memory)
         {
-            ProcessStartInfo info = new ProcessStartInfo
+            _startInfo = new ProcessStartInfo
             {
                 FileName = fileName,
                 Arguments = arguments
@@ -148,6 +161,7 @@ namespace TinyRM.NodeManager
             if (!disposedValue)
             {
                 KillProcessTree();
+                _root.Dispose();
                 Dispose();
                 disposedValue = true;
             }
