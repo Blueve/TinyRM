@@ -12,6 +12,10 @@ namespace TinyRM.NodeManager
     /// </summary>
     class ContainerManager
     {
+        /// <summary>
+        /// Manager's status
+        /// </summary>
+        public ContainerManagerStatus Status { get; private set; }
 
         /// <summary>
         /// Track period
@@ -27,6 +31,7 @@ namespace TinyRM.NodeManager
             _container = container;
             _memoryTracker = new Timer(
                 obj => MemoryTracker(), null, Timeout.Infinite, Timeout.Infinite);
+            Status = ContainerManagerStatus.Initialized;
         }
 
         /// <summary>
@@ -37,6 +42,7 @@ namespace TinyRM.NodeManager
         {
             ThreadPool.QueueUserWorkItem(obj => _container.Run());
             _memoryTracker.Change(0, Timeout.Infinite);
+            Status = ContainerManagerStatus.Tracking;
         }
 
         /// <summary>
@@ -45,11 +51,19 @@ namespace TinyRM.NodeManager
         /// </summary>
         private void MemoryTracker()
         {
+            if(_container.HasExited)
+            {
+                // Stop tracking
+                _memoryTracker.Change(Timeout.Infinite, Timeout.Infinite);
+                Status = ContainerManagerStatus.ExitedNormaly;
+            }
+
             if(_container.GetMemoryUsage() - _container.MemoryLimit < 0)
             {
                 // Shutdown current container
                 _container.Dispose();
                 _memoryTracker.Dispose();
+                Status = ContainerManagerStatus.ExitedMandatory;
             }
             else
                 _memoryTracker.Change(PERIOD, Timeout.Infinite);
@@ -60,6 +74,7 @@ namespace TinyRM.NodeManager
     {
         Initialized,
         Tracking,
-        
+        ExitedNormaly,
+        ExitedMandatory
     }
 }
