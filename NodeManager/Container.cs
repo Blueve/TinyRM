@@ -13,6 +13,11 @@ namespace TinyRM.NodeManager
         /// Memory limit of this container
         /// </summary>
         public int MemoryLimit { get; private set; }
+
+        /// <summary>
+        /// Has current container exited
+        /// </summary>
+        public abstract bool HasExited { get; }
         #endregion
 
         #region Constructor
