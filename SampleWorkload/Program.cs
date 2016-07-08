@@ -27,7 +27,7 @@ namespace SampleWorkload
             }
             catch(Exception)
             {
-                return;
+                Environment.Exit(-1);
             }
         }
     }
