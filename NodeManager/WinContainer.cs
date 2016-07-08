@@ -33,7 +33,7 @@ namespace TinyRM.NodeManager
         {
             get
             {
-                return _root.HasExited;
+                return _root?.HasExited ?? true;
             }
         }
         #endregion
@@ -160,7 +160,8 @@ namespace TinyRM.NodeManager
         {
             if (!disposedValue)
             {
-                KillProcessTree();
+                if(!HasExited)
+                    KillProcessTree();
                 _root.Dispose();
                 Dispose();
                 disposedValue = true;
@@ -174,6 +175,10 @@ namespace TinyRM.NodeManager
         public override long GetMemoryUsage()
         {
             long usage = 0;
+
+            if (HasExited)
+                return usage;
+
             foreach (var process in TraverseProcessTree())
             {
                 usage += process.WorkingSet64;
