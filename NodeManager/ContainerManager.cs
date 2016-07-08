@@ -40,8 +40,8 @@ namespace TinyRM.NodeManager
         /// </summary>
         public void Run()
         {
-            ThreadPool.QueueUserWorkItem(obj => _container.Run());
-            _memoryTracker.Change(0, Timeout.Infinite);
+            _container.Run();
+            _memoryTracker.Change(PERIOD, Timeout.Infinite);
             Status = ContainerManagerStatus.Tracking;
         }
 
