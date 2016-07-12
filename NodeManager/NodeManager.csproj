@@ -46,9 +46,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Container.cs" />
+    <Compile Include="ContainerFactory.cs" />
     <Compile Include="ContainerManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecourseManager.cs" />
     <Compile Include="WinContainer.cs" />
   </ItemGroup>
   <ItemGroup>
