@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TinyRM.NodeManager
 {
-    public static class ContainerFactory
+    static class ContainerFactory
     {
         public static ContainerManager CreateWinContainer(int memoryLimit)
         {
