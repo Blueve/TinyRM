@@ -13,6 +13,11 @@ namespace TinyRM.NodeManager
     class ContainerManager
     {
         /// <summary>
+        /// Max memory usage of this container
+        /// </summary>
+        public int MemoryUsage { get; private set; }
+
+        /// <summary>
         /// Manager's status
         /// </summary>
         public ContainerManagerStatus Status { get; private set; }
@@ -31,6 +36,8 @@ namespace TinyRM.NodeManager
             _container = container;
             _memoryTracker = new Timer(
                 obj => MemoryTracker(), null, Timeout.Infinite, Timeout.Infinite);
+
+            MemoryUsage = _container.MemoryLimit;
             Status = ContainerManagerStatus.Initialized;
         }
 
